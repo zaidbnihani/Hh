@@ -1,0 +1,70 @@
+name: Build and Release APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+        
+      - name: Generate release keystore
+        run: |
+          rm -f keystore.jks keystore.properties
+
+          keytool -genkeypair -v \
+            -keystore keystore.jks \
+            -storetype JKS \
+            -storepass seal-release-store-password \
+            -keypass seal-release-key-password \
+            -alias seal-release \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Seal, OU=Seal, O=Seal, L=Amman, ST=Amman, C=JO"
+
+          cat > keystore.properties <<EOF
+          storeFile=keystore.jks
+          storePassword=seal-release-store-password
+          keyAlias=seal-release
+          keyPassword=seal-release-key-password
+          EOF
+      - name: Build Release APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleRelease
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v2.0.0
+          name: Seal+ v2.0.0
+          body: |
+            # Seal+ v2.0.0
+
+            First custom release of Seal+.
+
+            Version: 2.0.0
+
+            This release was automatically built using GitHub Actions.
+          files: |
+            build/outputs/apk/**/*.apk
+          fail_on_unmatched_files: true
