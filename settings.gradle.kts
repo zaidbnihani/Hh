@@ -23,4 +23,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Seal"
 include (":app")
-include(":color")

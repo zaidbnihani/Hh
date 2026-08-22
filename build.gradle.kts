@@ -1,46 +1,7 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-kotlin {
-    jvmToolchain(8)
-}
-android {
-    compileSdk = 34
-    defaultConfig {
-        minSdk = 21
-    }
-    namespace = "com.junkfood.seal.color"
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        sourceCompatibility = JavaVersion.VERSION_1_8
-    }
-    buildFeatures {
-        compose = true
-    }
-    buildTypes {
-        all {
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            )
-            isMinifyEnabled = true
-        }
-    }
-}
-dependencies {
-    api(platform(libs.androidx.compose.bom))
-    api(libs.androidx.compose.ui)
-    api(libs.androidx.compose.runtime)
-    api(libs.androidx.core.ktx)
-    api(libs.androidx.compose.foundation)
-    api(libs.androidx.compose.material3)
-
+    id("com.android.application") version "8.5.2" apply false
+    id("org.jetbrains.kotlin.android") version "1.9.23" apply false
+    id("com.google.devtools.ksp") version "1.9.23-1.0.19" apply false
+    id("com.google.dagger.hilt.android") version "2.45" apply false
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23" apply false
 }
